@@ -56,8 +56,6 @@ $tree
 
 ![Diagrama de red](docs/img/Diagrama_arbol.jpg)
 
-# Tarea 4 Playbooks
-
 
 # Ejecución de los Playbooks
 
@@ -65,6 +63,7 @@ Centos:
 
 
  $ansible-playbook -i inventories/inventory.ini playbooks/nfs_setup.yml --become --extra-vars "@secret.yml" --ask-vault-pass
+
 
 # Flujo del playbook
 
@@ -78,6 +77,7 @@ Ubuntu:
 
 
  $ansible-playbook -i inventories/inventory.ini playbooks/hardening.yml --become --extra-vars "@secret.yml" --ask-vault-pass
+
 
 # Flujo del playbook
 
