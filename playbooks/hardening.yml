@@ -47,11 +47,18 @@
         line: 'PasswordAuthentication no'
       notify: Reiniciar ssh
 
-    - name: TAREA#8 Prohibimos login de root por SSH
-      ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?PermitRootLogin'
-        line: 'PermitRootLogin no'
+    - name: TAREA#8 part1 Prohibimos login de root por SSH y eliminamos cloud-init drop-in
+      block:
+       - name: Eliminar drop-in 50-cloud-init.conf si existe
+         ansible.builtin.file:
+           path: /etc/ssh/sshd_config.d/50-cloud-init.conf
+           state: absent
+
+       - name: TAREA#8 part2 Deshabilitar login de root por SSH en sshd_config
+         ansible.builtin.lineinfile:
+           path: /etc/ssh/sshd_config
+           regexp: '^\s*#?\s*PermitRootLogin'
+           line: 'PermitRootLogin no'
       notify: Reiniciar ssh
 
     - name: TAREA#9 Jail SSH en fail2ban
