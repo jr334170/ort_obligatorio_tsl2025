@@ -1,12 +1,10 @@
----
-
 - name: Configuramos servidor NFS en CentOS
   hosts: centos
   become: true
 
   vars:
     nfs_export_dir: /var/nfs_shared
-    nfs_export_opts: "*(rw,sync,no_subtree_check)" 
+    nfs_export_opts: "*(rw,sync,no_subtree_check)"
 
   tasks:
 
@@ -53,7 +51,7 @@
           {{ nfs_export_dir }} {{ nfs_export_opts }}
       notify: Recarga exports NFS
 
-    - name: TAREA#7 Aseguramos que el servicio NFS este iniciado y habilitado
+    - name: TAREA#7 Aseguramos que el servicio NFS esté iniciado y habilitado
       ansible.builtin.service:
         name: nfs-server
         state: started
@@ -62,7 +60,6 @@
   handlers:
     - name: Recarga exports NFS
       ansible.builtin.command: exportfs -ra
-      notify: Recargar servicio nfs-server
 
     - name: Recarga servicio nfs-server
       ansible.builtin.service:
