@@ -47,7 +47,7 @@
         line: 'PasswordAuthentication no'
       notify: Reiniciar ssh
 
-    - name: TAREA#8 Deny login root SSH + delete 50-cloud-init
+    - name: Bloque de tareas     
       block:
        - name: TAREA#8 Eliminar drop-in 50-cloud-init.conf
          ansible.builtin.file:
