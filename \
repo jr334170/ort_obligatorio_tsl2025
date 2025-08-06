@@ -47,14 +47,14 @@
         line: 'PasswordAuthentication no'
       notify: Reiniciar ssh
 
-    - name: TAREA#8 Deny login root SSH + delete 50-cloud-init
+    - name: TAREA#8 part1 Prohibimos login de root por SSH y eliminamos cloud-init drop-in
       block:
-       - name: TAREA#8 Eliminar drop-in 50-cloud-init.conf
+       - name: TAREA#8 part2  Eliminar drop-in 50-cloud-init.conf si existe
          ansible.builtin.file:
            path: /etc/ssh/sshd_config.d/50-cloud-init.conf
            state: absent
 
-       - name: TAREA#8 Deshabilitar login de root por SSH en sshd_config
+       - name: TAREA#8 part3 Deshabilitar login de root por SSH en sshd_config
          ansible.builtin.lineinfile:
            path: /etc/ssh/sshd_config
            regexp: '^\s*#?\s*PermitRootLogin'
