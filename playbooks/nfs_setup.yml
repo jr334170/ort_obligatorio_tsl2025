@@ -51,7 +51,7 @@
         marker: "# {mark} ANSIBLE MANAGED NFS EXPORT"
         block: |
           {{ nfs_export_dir }} {{ nfs_export_opts }}
-      notify: TAREA#8 Recargar exports NFS
+      notify: Recarga exports NFS
 
     - name: TAREA#7 Aseguramos que el servicio NFS este iniciado y habilitado
       ansible.builtin.service:
@@ -60,11 +60,11 @@
         enabled: yes
 
   handlers:
-    - name: TAREA#8 Recarga exports NFS
+    - name: Recarga exports NFS
       ansible.builtin.command: exportfs -ra
-      notify: TAREA#9 Recargar servicio nfs-server
+      notify: Recargar servicio nfs-server
 
-    - name: TAREA#9 Recarga servicio nfs-server
+    - name: Recarga servicio nfs-server
       ansible.builtin.service:
         name: nfs-server
         state: reloaded
