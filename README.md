@@ -56,23 +56,6 @@ $tree
 
 ![Diagrama de red](docs/img/Diagrama_arbol.jpg)
 
-# Tarea 3 AD-HOC
-
--Listar todos los usuarios en servidor Ubuntu
-
-
-$ansible ubuntu -m command -a "cut -d: -f1 /etc/passwd"
-
-
--Mostrar el uso de memoria en todos los servidores
-$ansible all -m command -a "free -h"
-
--Que el servicio chrony esté instalado y funcionando en servidor Centos
-
-
-$ansible centos -m shell -a "dnf install -y chrony && systemctl enable --now chronyd" --become --ask-become-pass
-
-
 # Tarea 4 Playbooks
 
 
