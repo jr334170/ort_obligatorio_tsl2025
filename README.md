@@ -14,10 +14,6 @@ $sudo usermod -aG wheel sysadmin
 
 $sudo dnf install -y ansible-core
 
-# Instalar ANSIBLE-GALAXY, para ejecución de modulos, etc según requisitos
-
-$ansible-galaxy install -r collections/requirements.yaml
-
 # Instalación de modulo requerido para Playbook Ubuntu UFW
 
 $ansible-galaxy collection install community.general
@@ -44,6 +40,14 @@ $sudo dnf install git
 
 
 $git clone git@github.com:jr334170/ort_obligatorio_tsl2025.git
+
+
+# Instalar ANSIBLE-GALAXY, para ejecución de modulos, etc según requisitos
+
+
+$ansible-galaxy install -r collections/requirements.yaml
+
+
 
 # Chequear que se haya creado correctamente el arbol de directorios y archivos.
 
