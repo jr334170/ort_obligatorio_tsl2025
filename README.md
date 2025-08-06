@@ -14,9 +14,6 @@ $sudo usermod -aG wheel sysadmin
 
 $sudo dnf install -y ansible-core
 
-# Instalación de modulo requerido para Playbook Ubuntu UFW
-
-$ansible-galaxy collection install community.general
 
 # Generar clave pública y agregarlo al Centro de confianza de GIT
 
@@ -46,7 +43,7 @@ $sudo dnf install git
 $git clone git@github.com:jr334170/ort_obligatorio_tsl2025.git
 
 
-# Instalar ANSIBLE-GALAXY, para ejecución de modulos, etc según requisitos
+# Instalar ANSIBLE-GALAXY, y modulos especificos para (UFW y FIREWALLD) para ejecución de modulos, etc según requisitos
 
 
 $ansible-galaxy install -r collections/requirements.yaml
