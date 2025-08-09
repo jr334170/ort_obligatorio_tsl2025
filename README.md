@@ -7,7 +7,7 @@ Instalar ansible-core a nivel de la VM Bastion.
 
 #Sudo dnf install -y ansible-core
 
-Instalamos Ansible-Galaxy para manejar roles y colecciones reutilizables.
+Instalar Ansible-Galaxy para manejar roles y colecciones reutilizables.
 
 $ansible-galaxy install -r collections/requirements.yaml
 
