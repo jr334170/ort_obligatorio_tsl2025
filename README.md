@@ -54,7 +54,6 @@ $ansible ubuntu -m command -a "cut -d: -f1 /etc/passwd"
 - Que el servicio chrony esté instalado y funcionando en servidor Centos
 $ansible centos -m shell -a "dnf install -y chrony && systemctl enable --now chronyd" --become --ask-become-pass
 
-#######################################################################################################################
 
 ####### Tarea Playbooks #######
 
@@ -62,6 +61,7 @@ $ansible centos -m shell -a "dnf install -y chrony && systemctl enable --now chr
 #Ejecución de los Playbooks
 
 Centos:
+
  $ansible-playbook -i inventories/inventory.ini playbooks/nfs_setup.yml --become --extra-vars "@secret.yml" --ask-vault-pass
 
 ![Diagrama de red](docs/img/Diagrama_playbook_centos.jpg)
@@ -70,6 +70,7 @@ Centos:
 
 
 Ubuntu:
+
  $ansible-playbook -i inventories/inventory.ini playbooks/hardening.yml --become --extra-vars "@secret.yml" --ask-vault-pass
 
 ![Diagrama de red](docs/img/Diagrama_playbook_ubuntu.jpg)
@@ -77,5 +78,5 @@ Ubuntu:
 
 
 
-#######################################################################################################################
+
 
