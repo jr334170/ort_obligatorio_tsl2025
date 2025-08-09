@@ -9,7 +9,7 @@
     nfs_export_opts: "*(rw,sync,no_subtree_check)" 
 
   tasks:
-    # Instalamos paquetes necesarios
+
     - name: TAREA#1 Asegurar paquetes requeridos instalados
       ansible.builtin.package:
         name:
@@ -17,14 +17,12 @@
           - firewalld
         state: present
 
-    # Aseguramos que firewalld esté activo
     - name: TAREA#2 Asegurar firewalld iniciado y habilitado
       ansible.builtin.service:
         name: firewalld
         state: started
         enabled: yes
 
-    # Abrimos puerto 2049 TCP en firewall
     - name: TAREA#3 Permitir TCP 2049 en el firewall
       ansible.posix.firewalld:
         port: 2049/tcp
@@ -32,7 +30,6 @@
         state: enabled
         immediate: yes
 
-    # Abrimos puerto 2049 UDP en firewall, ya que no tenemos confirmacion de que puerto usara el cliente.
     - name: TAREA#4 Permitir UDP 2049 en el firewall
       ansible.posix.firewalld:
         port: 2049/udp
@@ -40,8 +37,7 @@
         state: enabled
         immediate: yes
 
-    # TAREA5: Creamos el  directorio compartido con permisos correctos
-    - name: TAREA#5 Crear /var/nfs_shared con nobody:nobody y 0777
+    - name: TAREA#5 Creamos /var/nfs_shared con nobody:nobody y 0777
       ansible.builtin.file:
         path: "{{ nfs_export_dir }}"
         state: directory
@@ -49,8 +45,7 @@
         group: nobody
         mode: "0777"
 
-    # Configuramos  export en /etc/exports
-    - name: TAREA#6 Declarar export en /etc/exports
+    - name: TAREA#6 Declaramos export en /etc/exports
       ansible.builtin.blockinfile:
         path: /etc/exports
         marker: "# {mark} ANSIBLE MANAGED NFS EXPORT"
@@ -58,19 +53,18 @@
           {{ nfs_export_dir }} {{ nfs_export_opts }}
       notify: TAREA#8 Recargar exports NFS
 
-    # Aseguraramos servicio NFS activo
-    - name: TAREA#7 Asegurar servicio NFS iniciado y habilitado
+    - name: TAREA#7 Aseguramos que el servicio NFS este iniciado y habilitado
       ansible.builtin.service:
         name: nfs-server
         state: started
         enabled: yes
 
   handlers:
-    - name: TAREA#8 Recargar exports NFS
+    - name: TAREA#8 Recarga exports NFS
       ansible.builtin.command: exportfs -ra
       notify: TAREA#9 Recargar servicio nfs-server
 
-    - name: TAREA#9 Recargar servicio nfs-server
+    - name: TAREA#9 Recarga servicio nfs-server
       ansible.builtin.service:
         name: nfs-server
         state: reloaded
