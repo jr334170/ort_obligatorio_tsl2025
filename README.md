@@ -59,6 +59,9 @@ $tree
 $ansible ubuntu -m command -a "cut -d: -f1 /etc/passwd"
 
 
+-Mostrar el uso de memoria en todos los servidores
+$ansible all -m command -a "free -h"
+
 -Que el servicio chrony esté instalado y funcionando en servidor Centos
 
 
