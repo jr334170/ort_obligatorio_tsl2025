@@ -68,6 +68,8 @@ $ansible centos -m shell -a "dnf install -y chrony && systemctl enable --now chr
 
 Centos:
 
+Flujo del Playbook
+
  $ansible-playbook -i inventories/inventory.ini playbooks/nfs_setup.yml --become --extra-vars "@secret.yml" --ask-vault-pass
 
 ![Diagrama de red](docs/img/Diagrama_playbook_centos.jpg)
@@ -76,6 +78,8 @@ Centos:
 
 
 Ubuntu:
+
+Flujo del Playbook
 
  $ansible-playbook -i inventories/inventory.ini playbooks/hardening.yml --become --extra-vars "@secret.yml" --ask-vault-pass
 
