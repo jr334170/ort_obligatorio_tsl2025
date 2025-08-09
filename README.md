@@ -1,18 +1,16 @@
 # ort_obligatorio_tsl2025
 Repositorio Taller servidores Linux ORT 2025.
 
+#Instalar ansible-core a nivel de la VM Bastion.
 
-
-Instalar ansible-core a nivel de la VM Bastion.
-
-#Sudo dnf install -y ansible-core
+Sudo dnf install -y ansible-core
 
 Instalar Ansible-Galaxy para manejar roles y colecciones reutilizables.
 
 $ansible-galaxy install -r collections/requirements.yaml
 
 
-Comandos adhoc ejecutados.
+####### Tarea comandos adhoc: #######
 
 - Listar todos los usuarios en servidor Ubuntu
 
@@ -26,9 +24,11 @@ $ansible ubuntu -m command -a "cut -d: -f1 /etc/passwd"
 
 $ansible centos -m shell -a "dnf install -y chrony && systemctl enable --now chronyd" --become --ask-become-pass
 
-Tareas Playbooks:
+######## Tareas Playbooks: #########
 
-Crear directorios y archivos con lo necesario:
+##Crear directorios y archivos con lo necesario:
+
+##Modificar los host dependiendo de la config de red elegida
 
 touch ansible.cfg
 echo "[defaults]
@@ -63,7 +63,7 @@ echo "ansible_user: sysadmin" >> inventories/group_vars/ubuntu.yml
 touch inventories/group_vars/centos.yml
 echo "ansible_user: sysadmin" >> inventories/group_vars/centos.yml
 
-Chequear que haya este arbol de directorios creado:
+#Chequear que haya este arbol de directorios creado:
 
 ├── ansible.cfg
 ├── collections
@@ -83,7 +83,7 @@ Chequear que haya este arbol de directorios creado:
 
 
 
-Ejecución de los Playbooks
+#Ejecución de los Playbooks
 
 Centos:
 $ansible-playbook -i inventories/inventory.ini playbooks/nfs_setup.yml --become --extra-vars "@secret.yml" --ask-vault-pass
