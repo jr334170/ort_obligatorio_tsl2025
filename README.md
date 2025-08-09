@@ -30,14 +30,14 @@ $ssh-keygen
 
 $cat ~/.ssh/id_rsa.pub
 
-# Copiar clave pública y añadirla a Settings > SSH Keys en cuenta Github
+Pegar clave pública y añadirla a Settings > SSH Keys en cuenta Github
 
-Copiar la clave pública de tu Bastión hacia los Servidores, en nuestro caso 192.168.1.100 y 192.168.101
+# Copiar la clave pública de tu Bastión hacia los Servidores, en nuestro caso 192.168.1.100 y 192.168.101
 
 ssh-copy-id sysadmin@192.168.1.100
 ssh-copy-id sysadmin@192.168.1.101
 
-Instalar GIT:
+# Instalar GIT:
 $sudo dnf install git
 
 # Hacer el GIT Clone, del repositorio
