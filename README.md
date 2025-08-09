@@ -41,22 +41,7 @@ Chequear que se haya creado correctamente el arbol de directorios y archivos.
 
 $tree
 
-.
-├── ansible.cfg
-├── collections
-│   └── requirements.yaml
-├── inventories
-│   ├── all.yaml
-│   ├── group_vars
-│   │   ├── centos.yml
-│   │   └── ubuntu.yml
-│   └── inventory.ini
-├── LICENSE
-├── playbooks
-│   ├── hardening.yml
-│   └── nfs_setup.yml
-├── README.md
-└── secret.yml
+![Diagrama de red](docs/img/Diagrama_arbol.jpg)
 
 ####### Tarea AD-HOC #######
 
@@ -79,6 +64,7 @@ $ansible centos -m shell -a "dnf install -y chrony && systemctl enable --now chr
 Centos:
  $ansible-playbook -i inventories/inventory.ini playbooks/nfs_setup.yml --become --extra-vars "@secret.yml" --ask-vault-pass
 
+![Diagrama de red](docs/img/Diagrama_playbook_centos.jpg)
 
 
 
@@ -86,7 +72,7 @@ Centos:
 Ubuntu:
  $ansible-playbook -i inventories/inventory.ini playbooks/hardening.yml --become --extra-vars "@secret.yml" --ask-vault-pass
 
-
+![Diagrama de red](docs/img/Diagrama_playbook_ubuntu.jpg)
 
 
 
