@@ -45,6 +45,7 @@ $git clone git@github.com:jr334170/ort_obligatorio_tsl2025.git
 
 # Instalar ANSIBLE-GALAXY, y modulos especificos para (UFW y FIREWALLD) para ejecución de modulos, etc según requisitos
 
+$cd ort_obligatorio_tsl2025/
 
 $ansible-galaxy install -r collections/requirements.yaml
 
