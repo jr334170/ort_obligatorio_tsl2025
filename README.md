@@ -1,98 +1,83 @@
-# ort_obligatorio_tsl2025
-Repositorio Taller servidores Linux ORT 2025.
+####### Preparación de ambiente #######
 
-#Instalar ansible-core a nivel de la VM Bastion.
+En el nuevo Bastión o Controller, crear nuevo usuario en nuestro caso utilizamos "sysadmin" con permisos de sudo.
 
-Sudo dnf install -y ansible-core
+sudo useradd -m -s /bin/bash sysadmin
+sudo passwd sysadmin
+sudo usermod -aG wheel sysadmin
 
-Instalar Ansible-Galaxy para manejar roles y colecciones reutilizables.
+#Instalar ANSIBLE#
+
+$sudo dnf install -y ansible-core
+
+#Instalar ANSIBLE-GALAXY, para ejecución de modulos, etc según requisitos#
 
 $ansible-galaxy install -r collections/requirements.yaml
 
+#Generar clave pública y agregarlo al Centro de confianza de GIT#
 
-####### Tarea comandos adhoc: #######
+$ssh-keygen
 
-- Listar todos los usuarios en servidor Ubuntu
+#Para ver la clave pública y poder pegarla en los settings de Github#
 
-$ansible ubuntu -m command -a "cut -d: -f1 /etc/passwd"
+$cat ~/.ssh/id_rsa.pub
 
-- Listar todos los usuarios en servidor Ubuntu
+#Copiar clave pública y añadirla a Settings > SSH Keys en cuenta Github#
 
-$ansible ubuntu -m command -a "cut -d: -f1 /etc/passwd"
+"Copiar la clave pública de tu Bastión hacia los Servidores, en nuestro caso 192.168.1.100 y 192.168.101".
 
-- Que el servicio chrony esté instalado y funcionando en servidor Centos
+#ssh-copy-id sysadmin@192.168.1.100
+#ssh-copy-id sysadmin@192.168.1.101
 
-$ansible centos -m shell -a "dnf install -y chrony && systemctl enable --now chronyd" --become --ask-become-pass
+Instalar GIT:
+$sudo dnf install git
 
-######## Tareas Playbooks: #########
+Hacer el GIT Clone, del repositorio
+$git clone git@github.com:jr334170/ort_obligatorio_tsl2025.git
 
-##Crear directorios y archivos con lo necesario:
+Chequear que se haya creado correctamente el arbol de directorios y archivos.
 
-##Modificar los host dependiendo de la config de red elegida
+$tree
 
-touch ansible.cfg
-echo "[defaults]
-inventory = ./inventories/inventory.ini" >> ansible.cfg
-
-mkdir -p inventories
-touch inventories/inventory.ini
-echo "[centos]
-centos01        ansible_host=192.168.1.101
-
-[ubuntu]
-ubuntu01        ansible_host=192.168.1.100
-
-[linux:children]
-centos
-ubuntu
-
-[fileserver]
-centos01" >> inventories/inventory.ini
- 
- 
-mkdir -p collections
-touch collections/requirements.yaml
-echo "---
-collections:
-  - ansible.posix" >> collections/requirements.yaml
- 
-mkdir -p playbooks
-mkdir -p inventories/group_vars
-touch inventories/group_vars/ubuntu.yml
-echo "ansible_user: sysadmin" >> inventories/group_vars/ubuntu.yml
-touch inventories/group_vars/centos.yml
-echo "ansible_user: sysadmin" >> inventories/group_vars/centos.yml
-
-#Chequear que haya este arbol de directorios creado:
-
+.
 ├── ansible.cfg
 ├── collections
-│   └── requirements.yaml
+│   └── requirements.yaml
 ├── inventories
-│   ├── all.yaml
-│   ├── group_vars
-│   │   ├── centos.yml
-│   │   └── ubuntu.yml
-│   └── inventory.ini
+│   ├── all.yaml
+│   ├── group_vars
+│   │   ├── centos.yml
+│   │   └── ubuntu.yml
+│   └── inventory.ini
 ├── LICENSE
 ├── playbooks
-│   ├── hardening.yml
-│   └── nfs_setup.yml
+│   ├── hardening.yml
+│   └── nfs_setup.yml
 ├── README.md
 └── secret.yml
 
+####### Tarea AD-HOC #######
+
+- Listar todos los usuarios en servidor Ubuntu
+$ansible ubuntu -m command -a "cut -d: -f1 /etc/passwd"
+
+- Listar todos los usuarios en servidor Ubuntu
+$ansible ubuntu -m command -a "cut -d: -f1 /etc/passwd"
+
+- Que el servicio chrony esté instalado y funcionando en servidor Centos
+$ansible centos -m shell -a "dnf install -y chrony && systemctl enable --now chronyd" --become --ask-become-pass
+
+#######################################################################################################################
+
+####### Tarea Playbooks #######
 
 
 #Ejecución de los Playbooks
 
-Centos:
-$ansible-playbook -i inventories/inventory.ini playbooks/nfs_setup.yml --become --extra-vars "@secret.yml" --ask-vault-pass
+Centos: $ansible-playbook -i inventories/inventory.ini playbooks/nfs_setup.yml --become --extra-vars "@secret.yml" --ask-vault-pass
+
+Ubuntu: $ansible-playbook -i inventories/inventory.ini playbooks/hardening.yml --become --extra-vars "@secret.yml" --ask-vault-pass
 
 
-Ubuntu:
-$ansible-playbook -i inventories/inventory.ini playbooks/hardening.yml   --become --extra-vars "@secret.yml" --ask-vault-pass
-
-
-
-
+#######################################################################################################################
 
