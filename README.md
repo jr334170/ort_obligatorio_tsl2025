@@ -2,9 +2,9 @@
 
 En el nuevo Bastión o Controller, crear nuevo usuario en nuestro caso utilizamos "sysadmin" con permisos de sudo.
 
-sudo useradd -m -s /bin/bash sysadmin
-sudo passwd sysadmin
-sudo usermod -aG wheel sysadmin
+$sudo useradd -m -s /bin/bash sysadmin
+$sudo passwd sysadmin
+$sudo usermod -aG wheel sysadmin
 
 #Instalar ANSIBLE#
 
@@ -74,9 +74,11 @@ $ansible centos -m shell -a "dnf install -y chrony && systemctl enable --now chr
 
 #Ejecución de los Playbooks
 
-Centos: $ansible-playbook -i inventories/inventory.ini playbooks/nfs_setup.yml --become --extra-vars "@secret.yml" --ask-vault-pass
+Centos:
+ $ansible-playbook -i inventories/inventory.ini playbooks/nfs_setup.yml --become --extra-vars "@secret.yml" --ask-vault-pass
 
-Ubuntu: $ansible-playbook -i inventories/inventory.ini playbooks/hardening.yml --become --extra-vars "@secret.yml" --ask-vault-pass
+Ubuntu:
+ $ansible-playbook -i inventories/inventory.ini playbooks/hardening.yml --become --extra-vars "@secret.yml" --ask-vault-pass
 
 
 #######################################################################################################################
