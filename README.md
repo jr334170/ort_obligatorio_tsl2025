@@ -1,5 +1,16 @@
 ####### Preparación de ambiente #######
 
+
+## 🧭 Flujo de orquestación (Bastión ➜ Hosts)
+
+```mermaid
+flowchart LR
+  A[Bastión / Ansible\n192.168.1.102] -->|SSH (sysadmin)| B[Ubuntu01\n192.168.1.100]
+  A -->|SSH (sysadmin)| C[Centos01\n192.168.1.101]
+  A <-->|git clone/pull| G[(GitHub repo\njr334170/ort_obligatorio_tsl2025)]
+
+
+
 En el nuevo Bastión o Controller, crear nuevo usuario en nuestro caso utilizamos "sysadmin" con permisos de sudo.
 
 $sudo useradd -m -s /bin/bash sysadmin
@@ -78,50 +89,11 @@ Centos:
  $ansible-playbook -i inventories/inventory.ini playbooks/nfs_setup.yml --become --extra-vars "@secret.yml" --ask-vault-pass
 
 
-flowchart TD
-    S[Inicio play NFS\nhosts: centos, become: true]
-    S --> P1[Instalar paquetes:\n nfs-utils, firewalld]
-    P1 --> F1[Iniciar y habilitar firewalld]
-    F1 --> FW1[Abrir 2049/tcp en firewall]
-    FW1 --> FW2[Abrir 2049/udp en firewall]
-    FW2 --> D1[Crear /var/nfs_shared\nowner: nobody:nobody\nmode: 0777]
-    D1 --> E1[Agregar export en /etc/exports]
-    E1 -->|notify| H1[Handler: exportfs -ra]
-    H1 --> H2[Handler: recargar nfs-server]
-    E1 --> SVC[Iniciar y habilitar nfs-server]
-    SVC --> V[Fin]
 
 
 
 Ubuntu:
  $ansible-playbook -i inventories/inventory.ini playbooks/hardening.yml --become --extra-vars "@secret.yml" --ask-vault-pass
-
-flowchart TD
-    S[Inicio play Hardening\nhosts: ubuntu, become: true]
-    S --> U1[apt dist-upgrade\n(update_cache: yes)]
-    U1 -->|notify| HR1[Handler: Reboot si hubo updates]
-    U1 --> U2[Instalar ufw]
-    U2 --> U3[Obtener estado de ufw\nufw status verbose]
-    U3 --> U4[Default deny incoming\n(si no estaba)]
-    U4 --> U5[Allow outgoing\n(si no estaba)]
-    U5 --> U6[Permitir OpenSSH\n(si no existe regla)]
-    U6 --> U7[Habilitar ufw\n(si no estaba activo)]
-    U7 --> SSH1[sshd_config:\nPasswordAuthentication no]
-    SSH1 -->|notify| HR2[Handler: Restart ssh]
-    SSH1 --> SSH2[sshd_config:\nPermitRootLogin no]
-    SSH2 -->|notify| HR2
-    SSH2 --> F2[Instalar fail2ban]
-    F2 --> F3[Crear/actualizar jail.d/sshd.local\n(enabled=true, límites)]
-    F3 -->|notify| HR3[Handler: Restart fail2ban]
-    F3 --> F4[fail2ban started + enabled]
-    F4 --> V[Fin]
-
-    HR1:::handler
-    HR2:::handler
-    HR3:::handler
-
-    classDef handler fill:#eef,stroke:#55f,stroke-width:1px;
-
 
 
 
