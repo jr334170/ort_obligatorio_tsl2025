@@ -1,0 +1,102 @@
+---
+
+- name: Hardening de servidores Ubuntu
+  hosts: ubuntu
+  become: true
+
+  tasks:
+
+    - name: TAREA#1 Actualizamos paquetes
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+      notify: TAREA#13 Reiniciar sistema si hay actualizaciones
+
+    - name: TAREA#2 Instalar ufw
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+
+    - name: TAREA#3 Obtenemos estado de UFW
+      ansible.builtin.command:
+        cmd: ufw status verbose
+      register: ufw_status
+      changed_when: false
+      failed_when: false
+
+    - name: TAREA#4 Fijamos política entrante a DENY
+      ansible.builtin.command:
+        cmd: ufw default deny incoming
+      when: "'Default: deny (incoming)' not in ufw_status.stdout"
+
+    - name: TAREA#5 Fijamos política saliente a ALLOW
+      ansible.builtin.command:
+        cmd: ufw default allow outgoing
+      when: "'Default: deny (incoming)' not in ufw_status.stdout or 'allow (outgoing)' not in ufw_status.stdout"
+
+    - name: TAREA#6 Permitimos SSH en UFW
+      ansible.builtin.command:
+        cmd: ufw allow OpenSSH
+      register: ufw_allow_ssh
+      changed_when: "'Skipping adding existing rule' not in ufw_allow_ssh.stdout"
+      failed_when: false
+
+    - name: TAREA#7 Habilitamos UFW
+      ansible.builtin.command:
+        cmd: ufw --force enable
+      when: "'Status: active' not in ufw_status.stdout"
+
+    - name: TAREA#8 SSH sin contraseña (solo clave pública)
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+      notify: TAREA#14 Reiniciar ssh
+
+    - name: TAREA#9 prohibimos login de root por SSH
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+      notify: TAREA#14 Reiniciar ssh
+
+    - name: TAREA#10 Instalamos fail2ban
+      ansible.builtin.apt:
+        name: fail2ban
+        state: present
+
+    - name: TAREA#11 Habilitamos jail de SSH en fail2ban
+      ansible.builtin.blockinfile:
+        path: /etc/fail2ban/jail.d/sshd.local
+        create: true
+        block: |
+          [sshd]
+          enabled = true
+          maxretry = 5
+          findtime = 10m
+          bantime = 1h
+      notify: TAREA#15 Reiniciar fail2ban
+
+    - name: TAREA#12 Aseguramos fail2ban iniciado y habilitado
+      ansible.builtin.service:
+        name: fail2ban
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: TAREA#13 Reiniciar sistema si hay actualizaciones
+      ansible.builtin.reboot:
+        msg: "Reinicio tras actualización de paquetes"
+        connect_timeout: 5
+        reboot_timeout: 600
+
+    - name: TAREA#14 Reiniciar ssh
+      ansible.builtin.service:
+        name: ssh
+        state: restarted
+
+    - name: TAREA#15 Reiniciar fail2ban
+      ansible.builtin.service:
+        name: fail2ban
+        state: restarted
+
