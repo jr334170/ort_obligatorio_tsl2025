@@ -3,76 +3,58 @@
 - name: Hardening de servidores Ubuntu
   hosts: ubuntu
   become: true
+  collections:
+    - community.general
 
   tasks:
-
     - name: TAREA#1 Actualizamos paquetes
       ansible.builtin.apt:
         upgrade: dist
         update_cache: yes
       notify: Reiniciar sistema si hay actualizaciones
 
-    - name: TAREA#2 Instalar ufw
+    - name: TAREA#2 Instalamos paquetes (ufw y fail2ban)
       ansible.builtin.apt:
-        name: ufw
+        name: [ufw, fail2ban]
         state: present
 
-    - name: TAREA#3 Obtenemos estado de UFW
-      ansible.builtin.command:
-        cmd: ufw status verbose
-      register: ufw_status
-      changed_when: false
-      failed_when: false
+    - name: TAREA#3 Política entrante DENY
+      community.general.ufw:
+        default: deny
+        direction: incoming
+      notify: Recargar UFW
 
-    - name: TAREA#4 Habilitamos UFW si está inactivo
-      ansible.builtin.command:
-        cmd: ufw --force enable
-      when: "'Status: active' not in ufw_status.stdout"
+    - name: TAREA#4 Política saliente ALLOW
+      community.general.ufw:
+        default: allow
+        direction: outgoing
+      notify: Recargar UFW
 
-    - name: TAREA#5 Obtenemos estado de UFW
-      ansible.builtin.command:
-        cmd: ufw status verbose
-      register: ufw_status_after
-      changed_when: false
-      failed_when: false
+    - name: TAREA#5 Permitimos OpenSSH
+      community.general.ufw:
+        rule: allow
+        name: OpenSSH
+      notify: Recargar UFW
 
-    - name: TAREA#6 Fijamos política entrante a DENY
-      ansible.builtin.command:
-        cmd: ufw default deny incoming
-      when: "'Default: deny (incoming)' not in ufw_status_after.stdout"
+    - name: TAREA#6 Habilitamos UFW (y arranque automático)
+      community.general.ufw:
+        state: enabled
 
-    - name: TAREA#7 Fijamos política saliente a ALLOW
-      ansible.builtin.command:
-        cmd: ufw default allow outgoing
-      when: "'Default: allow (outgoing)' not in ufw_status_after.stdout"
-
-    - name: TAREA#8 Permitimos SSH en UFW
-      ansible.builtin.command:
-        cmd: ufw allow OpenSSH
-      register: ufw_allow_ssh
-      changed_when: "'Skipping adding existing rule' not in ufw_allow_ssh.stdout"
-      failed_when: false
-
-    - name: TAREA#9 SSH sin contraseña (solo clave pública)
+    - name: TAREA#7 SSH solo con clave pública
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?PasswordAuthentication'
         line: 'PasswordAuthentication no'
       notify: Reiniciar ssh
 
-    - name: TAREA#10 prohibimos login de root por SSH
+    - name: TAREA#8 Prohibimos login de root por SSH
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#?PermitRootLogin'
         line: 'PermitRootLogin no'
       notify: Reiniciar ssh
 
-    - name: TAREA#11 Instalamos fail2ban
-      ansible.builtin.apt:
-        name: fail2ban
-        state: present
-
-    - name: TAREA#12 Habilitamos jail de SSH en fail2ban
+    - name: TAREA#9 Jail SSH en fail2ban
       ansible.builtin.blockinfile:
         path: /etc/fail2ban/jail.d/sshd.local
         create: true
@@ -84,16 +66,20 @@
           bantime = 1h
       notify: Reiniciar fail2ban
 
-    - name: TAREA#13 Aseguramos fail2ban iniciado y habilitado
+    - name: TAREA#10 Aseguramos fail2ban iniciado y habilitado
       ansible.builtin.service:
         name: fail2ban
         state: started
         enabled: true
 
   handlers:
+    - name: Recargar UFW
+      community.general.ufw:
+        state: reloaded
+
     - name: Reiniciar sistema si hay actualizaciones
       ansible.builtin.reboot:
-        msg: "Reinicio despues de  actualización de paquetes"
+        msg: "Reinicio tras actualización de paquetes"
         connect_timeout: 5
         reboot_timeout: 600
 
