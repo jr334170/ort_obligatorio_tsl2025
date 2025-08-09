@@ -1,15 +1,6 @@
 ####### Preparación de ambiente #######
 
-
-## 🧭 Flujo de orquestación (Bastión ➜ Hosts)
-
-```mermaid
-flowchart LR
-  A[Bastión / Ansible\n192.168.1.102] -->|SSH (sysadmin)| B[Ubuntu01\n192.168.1.100]
-  A -->|SSH (sysadmin)| C[Centos01\n192.168.1.101]
-  A <-->|git clone/pull| G[(GitHub repo\njr334170/ort_obligatorio_tsl2025)]
-
-
+![Diagrama de red](docs/img/Diagrama_red.jpg)
 
 En el nuevo Bastión o Controller, crear nuevo usuario en nuestro caso utilizamos "sysadmin" con permisos de sudo.
 
